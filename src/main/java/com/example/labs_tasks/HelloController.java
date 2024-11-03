@@ -172,4 +172,5 @@ public class HelloController {
     private void setColor(Color color) {
         currentColor = color;
     }
+
 }
