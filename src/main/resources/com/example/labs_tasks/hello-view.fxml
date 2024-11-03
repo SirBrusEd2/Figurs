@@ -23,6 +23,7 @@
         <Button fx:id="blueColorButton" text="Синий" />
         <Button fx:id="yellowColorButton" text="Жёлтый" />
         <Button fx:id="greenColorButton" text="Зелёный" />
+        <Button fx:id="blackColorButton" text="Чёрный" /> <!-- Добавляем кнопку для черного цвета -->
       </HBox>
     </VBox>
   </bottom>

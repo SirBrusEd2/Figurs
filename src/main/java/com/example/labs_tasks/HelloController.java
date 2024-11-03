@@ -36,6 +36,9 @@ public class HelloController {
     @FXML
     private Button greenColorButton;
 
+    @FXML
+    private Button blackColorButton; // Добавляем кнопку для черного цвета
+
     private GraphicsContext gc;
     private ShapeFactory shapeFactory;
     private int circleRadius = 5;
@@ -68,6 +71,7 @@ public class HelloController {
         blueColorButton.setOnAction(event -> setColor(Color.BLUE));
         yellowColorButton.setOnAction(event -> setColor(Color.YELLOW));
         greenColorButton.setOnAction(event -> setColor(Color.GREEN));
+        blackColorButton.setOnAction(event -> setColor(Color.BLACK)); // Добавляем обработчик для черного цвета
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -172,5 +176,4 @@ public class HelloController {
     private void setColor(Color color) {
         currentColor = color;
     }
-
 }
