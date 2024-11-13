@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -13,16 +14,7 @@ public class HelloController {
     private Canvas canvas;
 
     @FXML
-    private Button circlePenButton;
-
-    @FXML
-    private Button trianglePenButton;
-
-    @FXML
-    private Button rectanglePenButton;
-
-    @FXML
-    private Button plusPenButton;
+    private TextField shapeInput;
 
     @FXML
     private Button redColorButton;
@@ -49,10 +41,7 @@ public class HelloController {
     private Color currentColor = Color.BLACK;
     private boolean isDrawing = false;
     private double lastX, lastY;
-    private boolean isCirclePenSelected = true;
-    private boolean isTrianglePenSelected = false;
-    private boolean isRectanglePenSelected = false;
-    private boolean isPlusPenSelected = false;
+    private String currentShape = "круг"; // По умолчанию выбираем круг
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
@@ -62,10 +51,9 @@ public class HelloController {
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
         canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
 
-        circlePenButton.setOnAction(event -> selectCirclePen());
-        trianglePenButton.setOnAction(event -> selectTrianglePen());
-        rectanglePenButton.setOnAction(event -> selectRectanglePen());
-        plusPenButton.setOnAction(event -> selectPlusPen());
+        shapeInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            currentShape = newValue.trim().toLowerCase();
+        });
 
         redColorButton.setOnAction(event -> setColor(Color.RED));
         blueColorButton.setOnAction(event -> setColor(Color.BLUE));
@@ -96,14 +84,22 @@ public class HelloController {
     }
 
     private void drawShape(double x, double y) {
-        if (isCirclePenSelected) {
-            drawCircle(x, y);
-        } else if (isTrianglePenSelected) {
-            drawTriangle(x, y);
-        } else if (isRectanglePenSelected) {
-            drawRectangle(x, y);
-        } else if (isPlusPenSelected) {
-            drawPlus(x, y);
+        switch (currentShape) {
+            case "круг":
+                drawCircle(x, y);
+                break;
+            case "треугольник":
+                drawTriangle(x, y);
+                break;
+            case "прямоугольник":
+                drawRectangle(x, y);
+                break;
+            case "плюс":
+                drawPlus(x, y);
+                break;
+            default:
+                // Если введено неизвестное название фигуры, ничего не делаем
+                break;
         }
     }
 
@@ -136,41 +132,27 @@ public class HelloController {
         double stepX = (endX - startX) / distance;
         double stepY = (endY - startY) / distance;
 
-        double step = isCirclePenSelected ? circleRadius : (isTrianglePenSelected ? triangleSide : (isRectanglePenSelected ? Math.max(rectangleWidth, rectangleHeight) : plusSize));
+        double step = 0;
+        switch (currentShape) {
+            case "круг":
+                step = circleRadius;
+                break;
+            case "треугольник":
+                step = triangleSide;
+                break;
+            case "прямоугольник":
+                step = Math.max(rectangleWidth, rectangleHeight);
+                break;
+            case "плюс":
+                step = plusSize;
+                break;
+        }
 
         for (double i = 0; i <= distance; i += step) {
             double x = startX + stepX * i;
             double y = startY + stepY * i;
             drawShape(x, y);
         }
-    }
-
-    private void selectCirclePen() {
-        isCirclePenSelected = true;
-        isTrianglePenSelected = false;
-        isRectanglePenSelected = false;
-        isPlusPenSelected = false;
-    }
-
-    private void selectTrianglePen() {
-        isCirclePenSelected = false;
-        isTrianglePenSelected = true;
-        isRectanglePenSelected = false;
-        isPlusPenSelected = false;
-    }
-
-    private void selectRectanglePen() {
-        isCirclePenSelected = false;
-        isTrianglePenSelected = false;
-        isRectanglePenSelected = true;
-        isPlusPenSelected = false;
-    }
-
-    private void selectPlusPen() {
-        isCirclePenSelected = false;
-        isTrianglePenSelected = false;
-        isRectanglePenSelected = false;
-        isPlusPenSelected = true;
     }
 
     private void setColor(Color color) {

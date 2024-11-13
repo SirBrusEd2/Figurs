@@ -2,6 +2,7 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -13,10 +14,7 @@
   <bottom>
     <VBox alignment="CENTER" spacing="10">
       <HBox alignment="CENTER" spacing="10">
-        <Button fx:id="circlePenButton" text="Перо-круг" />
-        <Button fx:id="trianglePenButton" text="Перо-треугольник" />
-        <Button fx:id="rectanglePenButton" text="Перо-прямоугольник" />
-        <Button fx:id="plusPenButton" text="Перо-плюс" />
+        <TextField fx:id="shapeInput" promptText="Введите фигуру (круг, треугольник, прямоугольник, плюс)" />
       </HBox>
       <HBox alignment="CENTER" spacing="10">
         <Button fx:id="redColorButton" text="Красный" />
