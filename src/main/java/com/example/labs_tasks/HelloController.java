@@ -8,6 +8,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+
 public class HelloController {
 
     @FXML
@@ -31,6 +36,9 @@ public class HelloController {
     @FXML
     private Button blackColorButton; // Добавляем кнопку для черного цвета
 
+    @FXML
+    private Button undoButton; // Добавляем кнопку для отката назад
+
     private GraphicsContext gc;
     private ShapeFactory shapeFactory;
     private int circleRadius = 5;
@@ -42,6 +50,9 @@ public class HelloController {
     private boolean isDrawing = false;
     private double lastX, lastY;
     private String currentShape = "круг"; // По умолчанию выбираем круг
+
+    private Deque<Runnable> undoStack = new ArrayDeque<>();
+    private Map<String, Runnable> shapeMap = new HashMap<>();
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
@@ -60,6 +71,14 @@ public class HelloController {
         yellowColorButton.setOnAction(event -> setColor(Color.YELLOW));
         greenColorButton.setOnAction(event -> setColor(Color.GREEN));
         blackColorButton.setOnAction(event -> setColor(Color.BLACK)); // Добавляем обработчик для черного цвета
+
+        undoButton.setOnAction(event -> undoLastAction()); // Добавляем обработчик для кнопки отката назад (используем очередь)
+
+        // Инициализация shapeMap (вместо оператора switch)
+        shapeMap.put("круг", () -> drawCircle(lastX, lastY));
+        shapeMap.put("треугольник", () -> drawTriangle(lastX, lastY));
+        shapeMap.put("прямоугольник", () -> drawRectangle(lastX, lastY));
+        shapeMap.put("плюс", () -> drawPlus(lastX, lastY));
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -83,24 +102,17 @@ public class HelloController {
         isDrawing = false;
     }
 
+    // Использование shapeMap для выбора фигуры
     private void drawShape(double x, double y) {
-        switch (currentShape) {
-            case "круг":
-                drawCircle(x, y);
-                break;
-            case "треугольник":
-                drawTriangle(x, y);
-                break;
-            case "прямоугольник":
-                drawRectangle(x, y);
-                break;
-            case "плюс":
-                drawPlus(x, y);
-                break;
-            default:
-                // Если введено неизвестное название фигуры, ничего не делаем
-                break;
+        Runnable shapeAction = shapeMap.get(currentShape);
+        if (shapeAction != null) {
+            shapeAction.run();
+            undoStack.push(() -> clearShape(x, y)); // Добавляем действие для отката
         }
+    }
+
+    private void clearShape(double x, double y) {
+        gc.clearRect(x - 10, y - 10, 20, 20); // Очищаем область вокруг точки
     }
 
     private void drawCircle(double x, double y) {
@@ -157,5 +169,12 @@ public class HelloController {
 
     private void setColor(Color color) {
         currentColor = color;
+    }
+    // Отмена последнего действия с помощью очереди
+    private void undoLastAction() {
+        if (!undoStack.isEmpty()) {
+            Runnable lastAction = undoStack.pop();
+            lastAction.run();
+        }
     }
 }

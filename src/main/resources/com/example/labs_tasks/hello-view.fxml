@@ -15,6 +15,7 @@
     <VBox alignment="CENTER" spacing="10">
       <HBox alignment="CENTER" spacing="10">
         <TextField fx:id="shapeInput" promptText="Введите фигуру (круг, треугольник, прямоугольник, плюс)" />
+        <Button fx:id="undoButton" text="Отменить" />
       </HBox>
       <HBox alignment="CENTER" spacing="10">
         <Button fx:id="redColorButton" text="Красный" />
