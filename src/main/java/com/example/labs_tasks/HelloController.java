@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -19,7 +19,7 @@ public class HelloController {
     private Canvas canvas;
 
     @FXML
-    private TextField shapeInput;
+    private ComboBox<String> shapeComboBox;
 
     @FXML
     private Button redColorButton;
@@ -53,6 +53,7 @@ public class HelloController {
 
     private Deque<Runnable> undoStack = new ArrayDeque<>();
     private Map<String, Runnable> shapeMap = new HashMap<>();
+    private Map<String, Double> shapeStepMap = new HashMap<>();
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
@@ -62,8 +63,12 @@ public class HelloController {
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
         canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
 
-        shapeInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            currentShape = newValue.trim().toLowerCase();
+        // Инициализация ComboBox
+        shapeComboBox.getItems().addAll("круг", "треугольник", "прямоугольник", "плюс");
+        shapeComboBox.setValue("круг"); // Устанавливаем значение по умолчанию
+
+        shapeComboBox.setOnAction(event -> {
+            currentShape = shapeComboBox.getValue();
         });
 
         redColorButton.setOnAction(event -> setColor(Color.RED));
@@ -79,6 +84,12 @@ public class HelloController {
         shapeMap.put("треугольник", () -> drawTriangle(lastX, lastY));
         shapeMap.put("прямоугольник", () -> drawRectangle(lastX, lastY));
         shapeMap.put("плюс", () -> drawPlus(lastX, lastY));
+
+        // Инициализация shapeStepMap
+        shapeStepMap.put("круг", (double) circleRadius);
+        shapeStepMap.put("треугольник", triangleSide);
+        shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
+        shapeStepMap.put("плюс", plusSize);
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -144,21 +155,7 @@ public class HelloController {
         double stepX = (endX - startX) / distance;
         double stepY = (endY - startY) / distance;
 
-        double step = 0;
-        switch (currentShape) {
-            case "круг":
-                step = circleRadius;
-                break;
-            case "треугольник":
-                step = triangleSide;
-                break;
-            case "прямоугольник":
-                step = Math.max(rectangleWidth, rectangleHeight);
-                break;
-            case "плюс":
-                step = plusSize;
-                break;
-        }
+        double step = shapeStepMap.getOrDefault(currentShape, 1.0);
 
         for (double i = 0; i <= distance; i += step) {
             double x = startX + stepX * i;
@@ -170,6 +167,7 @@ public class HelloController {
     private void setColor(Color color) {
         currentColor = color;
     }
+
     // Отмена последнего действия с помощью очереди
     private void undoLastAction() {
         if (!undoStack.isEmpty()) {
