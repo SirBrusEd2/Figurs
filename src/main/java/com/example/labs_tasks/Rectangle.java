@@ -9,7 +9,7 @@ class Rectangle extends Shape {
         super(color);
         this.x = x;
         this.y = y;
-        this.w= w;
+        this.w = w;
         this.h = h;
     }
 }

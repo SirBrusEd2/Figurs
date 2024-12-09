@@ -3,6 +3,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -22,7 +23,10 @@
         <Button fx:id="blueColorButton" text="Синий" />
         <Button fx:id="yellowColorButton" text="Жёлтый" />
         <Button fx:id="greenColorButton" text="Зелёный" />
-        <Button fx:id="blackColorButton" text="Чёрный" /> <!-- Добавляем кнопку для черного цвета -->
+        <Button fx:id="blackColorButton" text="Чёрный" />
+      </HBox>
+      <HBox alignment="CENTER" spacing="10">
+        <TextField fx:id="brushSizeTextField" promptText="Размер кисти" />
       </HBox>
     </VBox>
   </bottom>

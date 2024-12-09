@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -34,10 +35,13 @@ public class HelloController {
     private Button greenColorButton;
 
     @FXML
-    private Button blackColorButton; // Добавляем кнопку для черного цвета
+    private Button blackColorButton;
 
     @FXML
-    private Button undoButton; // Добавляем кнопку для отката назад
+    private Button undoButton;
+
+    @FXML
+    private TextField brushSizeTextField;
 
     private GraphicsContext gc;
     private ShapeFactory shapeFactory;
@@ -49,7 +53,7 @@ public class HelloController {
     private Color currentColor = Color.BLACK;
     private boolean isDrawing = false;
     private double lastX, lastY;
-    private String currentShape = "круг"; // По умолчанию выбираем круг
+    private String currentShape = "круг";
 
     private Deque<Runnable> undoStack = new ArrayDeque<>();
     private Map<String, Runnable> shapeMap = new HashMap<>();
@@ -63,9 +67,8 @@ public class HelloController {
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
         canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
 
-        // Инициализация ComboBox
         shapeComboBox.getItems().addAll("круг", "треугольник", "прямоугольник", "плюс");
-        shapeComboBox.setValue("круг"); // Устанавливаем значение по умолчанию
+        shapeComboBox.setValue("круг");
 
         shapeComboBox.setOnAction(event -> {
             currentShape = shapeComboBox.getValue();
@@ -75,17 +78,26 @@ public class HelloController {
         blueColorButton.setOnAction(event -> setColor(Color.BLUE));
         yellowColorButton.setOnAction(event -> setColor(Color.YELLOW));
         greenColorButton.setOnAction(event -> setColor(Color.GREEN));
-        blackColorButton.setOnAction(event -> setColor(Color.BLACK)); // Добавляем обработчик для черного цвета
+        blackColorButton.setOnAction(event -> setColor(Color.BLACK));
 
-        undoButton.setOnAction(event -> undoLastAction()); // Добавляем обработчик для кнопки отката назад (используем очередь)
+        undoButton.setOnAction(event -> undoLastAction());
 
-        // Инициализация shapeMap (вместо оператора switch)
+        brushSizeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int size = Integer.parseInt(newValue);
+                if (size >= 1 && size <= 200) {
+                    updateBrushSize(size);
+                }
+            } catch (NumberFormatException e) {
+                // Ignore invalid input
+            }
+        });
+
         shapeMap.put("круг", () -> drawCircle(lastX, lastY));
         shapeMap.put("треугольник", () -> drawTriangle(lastX, lastY));
         shapeMap.put("прямоугольник", () -> drawRectangle(lastX, lastY));
         shapeMap.put("плюс", () -> drawPlus(lastX, lastY));
 
-        // Инициализация shapeStepMap
         shapeStepMap.put("круг", (double) circleRadius);
         shapeStepMap.put("треугольник", triangleSide);
         shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
@@ -113,41 +125,56 @@ public class HelloController {
         isDrawing = false;
     }
 
-    // Использование shapeMap для выбора фигуры
     private void drawShape(double x, double y) {
         Runnable shapeAction = shapeMap.get(currentShape);
         if (shapeAction != null) {
             shapeAction.run();
-            undoStack.push(() -> clearShape(x, y)); // Добавляем действие для отката
+            undoStack.push(() -> clearShape(x, y));
         }
     }
 
     private void clearShape(double x, double y) {
-        gc.clearRect(x - 10, y - 10, 20, 20); // Очищаем область вокруг точки
+        gc.clearRect(x - 10, y - 10, 20, 20);
     }
 
     private void drawCircle(double x, double y) {
-        gc.setFill(currentColor);
-        gc.fillOval(x - circleRadius, y - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        Shape circle = shapeFactory.createCircle((int) x, (int) y, circleRadius, currentColor);
+        drawShape(circle);
     }
 
     private void drawTriangle(double x, double y) {
-        double halfSide = triangleSide / 2;
-        double height = Math.sqrt(3) * halfSide;
-
-        gc.setFill(currentColor);
-        gc.fillPolygon(new double[]{x, x - halfSide, x + halfSide}, new double[]{y - height / 2, y + height / 2, y + height / 2}, 3);
+        Shape triangle = shapeFactory.createTriangle((int) x, (int) y, triangleSide, triangleSide, triangleSide, currentColor);
+        drawShape(triangle);
     }
 
     private void drawRectangle(double x, double y) {
-        gc.setFill(currentColor);
-        gc.fillRect(x - rectangleWidth / 2, y - rectangleHeight / 2, rectangleWidth, rectangleHeight);
+        Shape rectangle = shapeFactory.createRectangle((int) x, (int) y, rectangleWidth, rectangleHeight, currentColor);
+        drawShape(rectangle);
     }
 
     private void drawPlus(double x, double y) {
-        gc.setFill(currentColor);
-        gc.fillRect(x - plusSize / 4, y - plusSize / 2, plusSize / 2, plusSize);
-        gc.fillRect(x - plusSize / 2, y - plusSize / 4, plusSize, plusSize / 2);
+        Shape plus = shapeFactory.createPlus((int) x, (int) y, plusSize, plusSize, plusSize, plusSize, currentColor);
+        drawShape(plus);
+    }
+
+    private void drawShape(Shape shape) {
+        gc.setFill(shape.color);
+        if (shape instanceof Circle) {
+            Circle circle = (Circle) shape;
+            gc.fillOval(circle.x - circle.r, circle.y - circle.r, 2 * circle.r, 2 * circle.r);
+        } else if (shape instanceof Triangle) {
+            Triangle triangle = (Triangle) shape;
+            double halfSide = triangle.alf / 2;
+            double height = Math.sqrt(3) * halfSide;
+            gc.fillPolygon(new double[]{triangle.x, triangle.x - halfSide, triangle.x + halfSide}, new double[]{triangle.y - height / 2, triangle.y + height / 2, triangle.y + height / 2}, 3);
+        } else if (shape instanceof Rectangle) {
+            Rectangle rectangle = (Rectangle) shape;
+            gc.fillRect(rectangle.x - rectangle.w / 2, rectangle.y - rectangle.h / 2, rectangle.w, rectangle.h);
+        } else if (shape instanceof Plus) {
+            Plus plus = (Plus) shape;
+            gc.fillRect(plus.x - plus.px / 4, plus.y - plus.py / 2, plus.px / 2, plus.py);
+            gc.fillRect(plus.x - plus.px / 2, plus.y - plus.py / 4, plus.px, plus.py / 2);
+        }
     }
 
     private void drawLine(double startX, double startY, double endX, double endY) {
@@ -168,11 +195,23 @@ public class HelloController {
         currentColor = color;
     }
 
-    // Отмена последнего действия с помощью очереди
     private void undoLastAction() {
         if (!undoStack.isEmpty()) {
             Runnable lastAction = undoStack.pop();
             lastAction.run();
         }
+    }
+
+    private void updateBrushSize(double size) {
+        circleRadius = (int) size;
+        triangleSide = size;
+        rectangleWidth = (int) size;
+        rectangleHeight = (int) size;
+        plusSize = size;
+
+        shapeStepMap.put("круг", (double) circleRadius);
+        shapeStepMap.put("треугольник", triangleSide);
+        shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
+        shapeStepMap.put("плюс", plusSize);
     }
 }

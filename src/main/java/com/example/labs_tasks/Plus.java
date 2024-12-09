@@ -6,7 +6,7 @@ class Plus extends Shape {
     int x, y;
     double px, mx, py, my;
 
-   Plus(int x, int y,double px, double mx, double py, double my, Color color) {
+    Plus(int x, int y, double px, double mx, double py, double my, Color color) {
         super(color);
         this.x = x;
         this.y = y;
