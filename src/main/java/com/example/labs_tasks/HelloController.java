@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -23,22 +24,10 @@ public class HelloController {
     private ComboBox<String> shapeComboBox;
 
     @FXML
-    private Button redColorButton;
-
-    @FXML
-    private Button blueColorButton;
-
-    @FXML
-    private Button yellowColorButton;
-
-    @FXML
-    private Button greenColorButton;
-
-    @FXML
-    private Button blackColorButton;
-
-    @FXML
     private Button undoButton;
+
+    @FXML
+    private ColorPicker colorPicker;
 
     @FXML
     private TextField brushSizeTextField;
@@ -74,11 +63,7 @@ public class HelloController {
             currentShape = shapeComboBox.getValue();
         });
 
-        redColorButton.setOnAction(event -> setColor(Color.RED));
-        blueColorButton.setOnAction(event -> setColor(Color.BLUE));
-        yellowColorButton.setOnAction(event -> setColor(Color.YELLOW));
-        greenColorButton.setOnAction(event -> setColor(Color.GREEN));
-        blackColorButton.setOnAction(event -> setColor(Color.BLACK));
+        colorPicker.setOnAction(event -> setColor(colorPicker.getValue()));
 
         undoButton.setOnAction(event -> undoLastAction());
 
