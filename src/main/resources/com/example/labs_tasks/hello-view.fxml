@@ -2,6 +2,7 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.TextField?>
@@ -21,9 +22,11 @@
       </HBox>
       <HBox alignment="CENTER" spacing="10">
         <ColorPicker fx:id="colorPicker" />
+        <ComboBox fx:id="brushTypeComboBox" promptText="Тип кисти" />
       </HBox>
       <HBox alignment="CENTER" spacing="10">
         <TextField fx:id="brushSizeTextField" promptText="Размер кисти" />
+        <CheckBox fx:id="animationCheckBox" text="Анимация" />
       </HBox>
     </VBox>
   </bottom>

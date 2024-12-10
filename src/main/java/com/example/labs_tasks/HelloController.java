@@ -1,18 +1,27 @@
 package com.example.labs_tasks;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.util.Duration;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HelloController {
@@ -32,6 +41,12 @@ public class HelloController {
     @FXML
     private TextField brushSizeTextField;
 
+    @FXML
+    private ComboBox<String> brushTypeComboBox;
+
+    @FXML
+    private CheckBox animationCheckBox;
+
     private GraphicsContext gc;
     private ShapeFactory shapeFactory;
     private int circleRadius = 5;
@@ -43,10 +58,16 @@ public class HelloController {
     private boolean isDrawing = false;
     private double lastX, lastY;
     private String currentShape = "круг";
+    private String currentBrushType = "Обычная кисть";
+    private boolean isBlinking = false;
+    private Timeline blinkTimeline;
+    private double opacity = 1.0;
 
     private Deque<Runnable> undoStack = new ArrayDeque<>();
     private Map<String, Runnable> shapeMap = new HashMap<>();
     private Map<String, Double> shapeStepMap = new HashMap<>();
+    private List<Shape> shapes = new ArrayList<>(); // Список всех нарисованных фигур
+    private List<Shape> removedShapes = new ArrayList<>(); // Список удаленных фигур
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
@@ -67,6 +88,13 @@ public class HelloController {
 
         undoButton.setOnAction(event -> undoLastAction());
 
+        brushTypeComboBox.getItems().addAll("Обычная кисть", "Градиент");
+        brushTypeComboBox.setValue("Обычная кисть");
+
+        brushTypeComboBox.setOnAction(event -> {
+            currentBrushType = brushTypeComboBox.getValue();
+        });
+
         brushSizeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 int size = Integer.parseInt(newValue);
@@ -75,6 +103,15 @@ public class HelloController {
                 }
             } catch (NumberFormatException e) {
                 // Ignore invalid input
+            }
+        });
+
+        animationCheckBox.setOnAction(event -> {
+            isBlinking = animationCheckBox.isSelected();
+            if (isBlinking) {
+                startBlinking();
+            } else {
+                stopBlinking();
             }
         });
 
@@ -114,52 +151,88 @@ public class HelloController {
         Runnable shapeAction = shapeMap.get(currentShape);
         if (shapeAction != null) {
             shapeAction.run();
+            // Добавляем действие в стек отмены
             undoStack.push(() -> clearShape(x, y));
         }
     }
 
     private void clearShape(double x, double y) {
+        // Удаляем фигуру из списка shapes
+        Shape shapeToRemove = shapes.stream()
+                .filter(shape -> shape.getX() == x && shape.getY() == y)
+                .findFirst()
+                .orElse(null);
+        if (shapeToRemove != null) {
+            shapes.remove(shapeToRemove);
+            removedShapes.add(shapeToRemove);
+        }
+
+        // Очищаем область холста
         gc.clearRect(x - 10, y - 10, 20, 20);
     }
 
     private void drawCircle(double x, double y) {
         Shape circle = shapeFactory.createCircle((int) x, (int) y, circleRadius, currentColor);
-        drawShape(circle);
+        if (currentBrushType.equals("Градиент")) {
+            LinearGradient gradient = new LinearGradient(
+                    0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.WHITE),
+                    new Stop(1, currentColor)
+            );
+            circle = new FillTypeDecorator(circle, gradient);
+        }
+        circle.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
+        shapes.add(circle); // Добавляем фигуру в список всех фигур
+        drawShape(circle, gc, x, y, opacity);
     }
 
     private void drawTriangle(double x, double y) {
         Shape triangle = shapeFactory.createTriangle((int) x, (int) y, triangleSide, triangleSide, triangleSide, currentColor);
-        drawShape(triangle);
+        if (currentBrushType.equals("Градиент")) {
+            LinearGradient gradient = new LinearGradient(
+                    0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.WHITE),
+                    new Stop(1, currentColor)
+            );
+            triangle = new FillTypeDecorator(triangle, gradient);
+        }
+        triangle.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
+        shapes.add(triangle); // Добавляем фигуру в список всех фигур
+        drawShape(triangle, gc, x, y, opacity);
     }
 
     private void drawRectangle(double x, double y) {
         Shape rectangle = shapeFactory.createRectangle((int) x, (int) y, rectangleWidth, rectangleHeight, currentColor);
-        drawShape(rectangle);
+        if (currentBrushType.equals("Градиент")) {
+            LinearGradient gradient = new LinearGradient(
+                    0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.WHITE),
+                    new Stop(1, currentColor)
+            );
+            rectangle = new FillTypeDecorator(rectangle, gradient);
+        }
+        rectangle.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
+        shapes.add(rectangle); // Добавляем фигуру в список всех фигур
+        drawShape(rectangle, gc, x, y, opacity);
     }
 
     private void drawPlus(double x, double y) {
         Shape plus = shapeFactory.createPlus((int) x, (int) y, plusSize, plusSize, plusSize, plusSize, currentColor);
-        drawShape(plus);
+        if (currentBrushType.equals("Градиент")) {
+            LinearGradient gradient = new LinearGradient(
+                    0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.WHITE),
+                    new Stop(1, currentColor)
+            );
+            plus = new FillTypeDecorator(plus, gradient);
+        }
+        plus.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
+        shapes.add(plus); // Добавляем фигуру в список всех фигур
+        drawShape(plus, gc, x, y, opacity);
     }
 
-    private void drawShape(Shape shape) {
-        gc.setFill(shape.color);
-        if (shape instanceof Circle) {
-            Circle circle = (Circle) shape;
-            gc.fillOval(circle.x - circle.r, circle.y - circle.r, 2 * circle.r, 2 * circle.r);
-        } else if (shape instanceof Triangle) {
-            Triangle triangle = (Triangle) shape;
-            double halfSide = triangle.alf / 2;
-            double height = Math.sqrt(3) * halfSide;
-            gc.fillPolygon(new double[]{triangle.x, triangle.x - halfSide, triangle.x + halfSide}, new double[]{triangle.y - height / 2, triangle.y + height / 2, triangle.y + height / 2}, 3);
-        } else if (shape instanceof Rectangle) {
-            Rectangle rectangle = (Rectangle) shape;
-            gc.fillRect(rectangle.x - rectangle.w / 2, rectangle.y - rectangle.h / 2, rectangle.w, rectangle.h);
-        } else if (shape instanceof Plus) {
-            Plus plus = (Plus) shape;
-            gc.fillRect(plus.x - plus.px / 4, plus.y - plus.py / 2, plus.px / 2, plus.py);
-            gc.fillRect(plus.x - plus.px / 2, plus.y - plus.py / 4, plus.px, plus.py / 2);
-        }
+    private void drawShape(Shape shape, GraphicsContext gc, double x, double y, double opacity) {
+        shape.draw(gc, x, y, opacity);
     }
 
     private void drawLine(double startX, double startY, double endX, double endY) {
@@ -182,8 +255,31 @@ public class HelloController {
 
     private void undoLastAction() {
         if (!undoStack.isEmpty()) {
+            // Временно останавливаем анимацию
+            stopBlinking();
+
+            // Получаем последнее действие из стека отмены
             Runnable lastAction = undoStack.pop();
             lastAction.run();
+
+            // Удаляем фигуру из списка shapes
+            if (!shapes.isEmpty()) {
+                Shape shapeToRemove = shapes.remove(shapes.size() - 1);
+                removedShapes.add(shapeToRemove);
+            }
+
+            // Перерисовываем оставшиеся фигуры
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            for (Shape shape : shapes) {
+                if (!removedShapes.contains(shape)) {
+                    shape.draw(gc, shape.getX(), shape.getY(), 1.0);
+                }
+            }
+
+            // Восстанавливаем анимацию, если она была включена
+            if (isBlinking) {
+                startBlinking();
+            }
         }
     }
 
@@ -198,5 +294,35 @@ public class HelloController {
         shapeStepMap.put("треугольник", triangleSide);
         shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
         shapeStepMap.put("плюс", plusSize);
+    }
+
+    private void startBlinking() {
+        blinkTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.5), event -> {
+                    opacity = opacity == 1.0 ? 0.0 : 1.0;
+                    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                    for (Shape shape : shapes) {
+                        if (!removedShapes.contains(shape)) {
+                            // Перерисовываем только оставшиеся фигуры
+                            shape.draw(gc, shape.getX(), shape.getY(), shape.hasAnimation() ? opacity : 1.0);
+                        }
+                    }
+                })
+        );
+        blinkTimeline.setCycleCount(Timeline.INDEFINITE);
+        blinkTimeline.play();
+    }
+
+    private void stopBlinking() {
+        if (blinkTimeline != null) {
+            blinkTimeline.stop();
+            opacity = 1.0;
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            for (Shape shape : shapes) {
+                if (!removedShapes.contains(shape)) {
+                    shape.draw(gc, shape.getX(), shape.getY(), 1.0);
+                }
+            }
+        }
     }
 }
