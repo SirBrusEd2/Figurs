@@ -15,7 +15,11 @@ class Circle extends Shape {
 
     @Override
     public void draw(GraphicsContext gc, double x, double y, double opacity) {
-        gc.setFill(color);
+        if (gradient != null) {
+            gc.setFill(gradient); // Используем градиент, если он есть
+        } else {
+            gc.setFill(color); // Иначе используем обычный цвет
+        }
         gc.setGlobalAlpha(opacity); // Устанавливаем прозрачность
         gc.fillOval(x - r, y - r, 2 * r, 2 * r);
         gc.setGlobalAlpha(1.0); // Сбрасываем прозрачность

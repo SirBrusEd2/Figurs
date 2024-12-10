@@ -13,8 +13,8 @@ public class FillTypeDecorator extends ShapeDecorator {
 
     @Override
     public void draw(GraphicsContext gc, double x, double y, double opacity) {
-        gc.setFill(fillType);
-        super.draw(gc, x, y, opacity);
-        gc.fill(); // Убедитесь, что заливка отрисовывается
+        gc.setFill(fillType); // Устанавливаем градиент
+        super.draw(gc, x, y, opacity); // Рисуем фигуру
+        gc.fill(); // Применяем заливку
     }
 }

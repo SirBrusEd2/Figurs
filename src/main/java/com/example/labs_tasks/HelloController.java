@@ -174,12 +174,13 @@ public class HelloController {
     private void drawCircle(double x, double y) {
         Shape circle = shapeFactory.createCircle((int) x, (int) y, circleRadius, currentColor);
         if (currentBrushType.equals("Градиент")) {
+            // Создаем градиент для круга
             LinearGradient gradient = new LinearGradient(
                     0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                     new Stop(0, Color.WHITE),
                     new Stop(1, currentColor)
             );
-            circle = new FillTypeDecorator(circle, gradient);
+            circle.setGradient(gradient); // Сохраняем градиент в фигуре
         }
         circle.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
         shapes.add(circle); // Добавляем фигуру в список всех фигур
@@ -189,12 +190,13 @@ public class HelloController {
     private void drawTriangle(double x, double y) {
         Shape triangle = shapeFactory.createTriangle((int) x, (int) y, triangleSide, triangleSide, triangleSide, currentColor);
         if (currentBrushType.equals("Градиент")) {
+            // Создаем градиент для треугольника
             LinearGradient gradient = new LinearGradient(
                     0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                     new Stop(0, Color.WHITE),
                     new Stop(1, currentColor)
             );
-            triangle = new FillTypeDecorator(triangle, gradient);
+            triangle.setGradient(gradient); // Сохраняем градиент в фигуре
         }
         triangle.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
         shapes.add(triangle); // Добавляем фигуру в список всех фигур
@@ -204,12 +206,13 @@ public class HelloController {
     private void drawRectangle(double x, double y) {
         Shape rectangle = shapeFactory.createRectangle((int) x, (int) y, rectangleWidth, rectangleHeight, currentColor);
         if (currentBrushType.equals("Градиент")) {
+            // Создаем градиент для прямоугольника
             LinearGradient gradient = new LinearGradient(
                     0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                     new Stop(0, Color.WHITE),
                     new Stop(1, currentColor)
             );
-            rectangle = new FillTypeDecorator(rectangle, gradient);
+            rectangle.setGradient(gradient); // Сохраняем градиент в фигуре
         }
         rectangle.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
         shapes.add(rectangle); // Добавляем фигуру в список всех фигур
@@ -219,12 +222,13 @@ public class HelloController {
     private void drawPlus(double x, double y) {
         Shape plus = shapeFactory.createPlus((int) x, (int) y, plusSize, plusSize, plusSize, plusSize, currentColor);
         if (currentBrushType.equals("Градиент")) {
+            // Создаем градиент для плюса
             LinearGradient gradient = new LinearGradient(
                     0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                     new Stop(0, Color.WHITE),
                     new Stop(1, currentColor)
             );
-            plus = new FillTypeDecorator(plus, gradient);
+            plus.setGradient(gradient); // Сохраняем градиент в фигуре
         }
         plus.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
         shapes.add(plus); // Добавляем фигуру в список всех фигур

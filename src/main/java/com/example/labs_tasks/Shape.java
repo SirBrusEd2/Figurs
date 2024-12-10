@@ -2,36 +2,38 @@ package com.example.labs_tasks;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
-abstract class Shape {
-    Color color;
-    protected int x;
-    protected int y;
-    protected boolean hasAnimation; // Добавлено поле для хранения информации о наличии анимации
+public abstract class Shape {
+    protected Color color;
+    protected Paint gradient; // Поле для градиента
+    protected boolean hasAnimation;
 
     public Shape(Color color) {
         this.color = color;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
     public abstract void draw(GraphicsContext gc, double x, double y, double opacity);
 
-    public int getX() {
-        return x;
-    }
+    public abstract int getX();
 
-    public int getY() {
-        return y;
+    public abstract int getY();
+
+    public void setHasAnimation(boolean hasAnimation) {
+        this.hasAnimation = hasAnimation;
     }
 
     public boolean hasAnimation() {
         return hasAnimation;
     }
 
-    public void setHasAnimation(boolean hasAnimation) {
-        this.hasAnimation = hasAnimation;
+    // Установка градиента
+    public void setGradient(Paint gradient) {
+        this.gradient = gradient;
+    }
+
+    // Получение градиента
+    public Paint getGradient() {
+        return gradient;
     }
 }

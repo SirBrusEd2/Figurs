@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 class Triangle extends Shape {
     int x, y;
-    double alf, bet, gam;
+    double alf, bet, gam; // Стороны треугольника
 
     Triangle(int x, int y, double alf, double bet, double gam, Color color) {
         super(color);
@@ -18,11 +18,24 @@ class Triangle extends Shape {
 
     @Override
     public void draw(GraphicsContext gc, double x, double y, double opacity) {
-        double halfSide = alf / 2;
-        double height = Math.sqrt(3) * halfSide;
-        gc.setFill(color);
+        if (gradient != null) {
+            gc.setFill(gradient); // Используем градиент, если он есть
+        } else {
+            gc.setFill(color); // Иначе используем обычный цвет
+        }
         gc.setGlobalAlpha(opacity); // Устанавливаем прозрачность
-        gc.fillPolygon(new double[]{x, x - halfSide, x + halfSide}, new double[]{y - height / 2, y + height / 2, y + height / 2}, 3);
+
+        // Рисуем треугольник
+        double halfAlf = alf / 2;
+        double height = (Math.sqrt(3) / 2) * alf;
+
+        gc.beginPath();
+        gc.moveTo(x, y - height / 2);
+        gc.lineTo(x - halfAlf, y + height / 2);
+        gc.lineTo(x + halfAlf, y + height / 2);
+        gc.closePath();
+        gc.fill();
+
         gc.setGlobalAlpha(1.0); // Сбрасываем прозрачность
     }
 

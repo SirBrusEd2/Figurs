@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 class Plus extends Shape {
     int x, y;
-    double px, mx, py, my;
+    double px, mx, py, my; // Параметры для плюса
 
     Plus(int x, int y, double px, double mx, double py, double my, Color color) {
         super(color);
@@ -19,10 +19,17 @@ class Plus extends Shape {
 
     @Override
     public void draw(GraphicsContext gc, double x, double y, double opacity) {
-        gc.setFill(color);
+        if (gradient != null) {
+            gc.setFill(gradient); // Используем градиент, если он есть
+        } else {
+            gc.setFill(color); // Иначе используем обычный цвет
+        }
         gc.setGlobalAlpha(opacity); // Устанавливаем прозрачность
-        gc.fillRect(x - px / 4, y - py / 2, px / 2, py);
-        gc.fillRect(x - px / 2, y - py / 4, px, py / 2);
+
+        // Рисуем плюс
+        gc.fillRect(x - px / 2, y - py / 2, px, py); // Вертикальная линия
+        gc.fillRect(x - mx / 2, y - my / 2, mx, my); // Горизонтальная линия
+
         gc.setGlobalAlpha(1.0); // Сбрасываем прозрачность
     }
 
