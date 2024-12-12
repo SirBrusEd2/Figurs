@@ -1,0 +1,135 @@
+@startuml
+class com.example.labs_tasks.Plus {
+~ int x
+~ double px
++ void draw(GraphicsContext,double,double,double)
++ int getX()
++ int getY()
+}
+
+class com.example.labs_tasks.Circle {
+~ int x
++ void draw(GraphicsContext,double,double,double)
++ int getX()
++ int getY()
+}
+
+class com.example.labs_tasks.Triangle {
+~ int x
+~ double alf
++ void draw(GraphicsContext,double,double,double)
++ int getX()
++ int getY()
+}
+
+abstract class com.example.labs_tasks.ShapeDecorator {
+# Shape decoratedShape
+# int x
+# int y
++ void draw(GraphicsContext,double,double,double)
++ int getX()
++ int getY()
+}
+
+class com.example.labs_tasks.FillTypeDecorator {
+- Paint fillType
++ void draw(GraphicsContext,double,double,double)
+}
+
+class com.example.labs_tasks.ShapeFactory {
++ Shape createCircle(int,int,int,Color)
++ Shape createTriangle(int,int,double,double,double,Color)
++ Shape createRectangle(int,int,int,int,Color)
++ Shape createPlus(int,int,double,double,double,double,Color)
+}
+
+class com.example.labs_tasks.HelloApplication {
++ void start(Stage)
++ {static} void main(String[])
+}
+
+abstract class com.example.labs_tasks.Shape {
+# Color color
+# Paint gradient
+# boolean hasAnimation
++ {abstract}void draw(GraphicsContext,double,double,double)
++ {abstract}int getX()
++ {abstract}int getY()
++ void setHasAnimation(boolean)
++ boolean hasAnimation()
++ void setGradient(Paint)
++ Paint getGradient()
+}
+
+class com.example.labs_tasks.Rectangle {
+~ int x
++ void draw(GraphicsContext,double,double,double)
++ int getX()
++ int getY()
+}
+
+class com.example.labs_tasks.BlinkingShapeDecorator {
+- boolean isBlinking
++ void draw(GraphicsContext,double,double,double)
+}
+
+class com.example.labs_tasks.HelloController {
+- Canvas canvas
+- ComboBox<String> shapeComboBox
+- Button undoButton
+- ColorPicker colorPicker
+- TextField brushSizeTextField
+- ComboBox<String> brushTypeComboBox
+- CheckBox animationCheckBox
+- GraphicsContext gc
+- ShapeFactory shapeFactory
+- int circleRadius
+- double triangleSide
+- int rectangleWidth
+- int rectangleHeight
+- double plusSize
+- Color currentColor
+- boolean isDrawing
+- double lastX
+- String currentShape
+- String currentBrushType
+- boolean isBlinking
+- Timeline blinkTimeline
+- double opacity
+- Deque<Runnable> undoStack
+- Map<String,Runnable> shapeMap
+- Map<String,Double> shapeStepMap
+- List<Shape> shapes
+- List<Shape> removedShapes
++ void initialize()
+- void handleMousePressed(MouseEvent)
+- void handleMouseDragged(MouseEvent)
+- void handleMouseReleased(MouseEvent)
+- void drawShape(double,double)
+- void clearShape(double,double)
+- void drawCircle(double,double)
+- void drawTriangle(double,double)
+- void drawRectangle(double,double)
+- void drawPlus(double,double)
+- void drawShape(Shape,GraphicsContext,double,double,double)
+- void drawLine(double,double,double,double)
+- void setColor(Color)
+- void undoLastAction()
+- void updateBrushSize(double)
+- void startBlinking()
+- void stopBlinking()
+}
+
+com.example.labs_tasks.Shape <|-- com.example.labs_tasks.Plus
+com.example.labs_tasks.Shape <|-- com.example.labs_tasks.Circle
+com.example.labs_tasks.Shape <|-- com.example.labs_tasks.Triangle
+com.example.labs_tasks.Shape <|-- com.example.labs_tasks.ShapeDecorator
+com.example.labs_tasks.ShapeDecorator <|-- com.example.labs_tasks.FillTypeDecorator
+javafx.application.Application <|-- com.example.labs_tasks.HelloApplication
+com.example.labs_tasks.Shape <|-- com.example.labs_tasks.Rectangle
+com.example.labs_tasks.ShapeDecorator <|-- com.example.labs_tasks.BlinkingShapeDecorator
+
+com.example.labs_tasks.HelloApplication --> com.example.labs_tasks.HelloController : uses
+com.example.labs_tasks.HelloController --> com.example.labs_tasks.ShapeFactory : uses
+com.example.labs_tasks.ShapeFactory --> com.example.labs_tasks.Shape : creates
+@enduml
