@@ -4,11 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="96cd455d-1238-4c79-9282-9fa8b6c3e4d5" name="Changes" comment="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="96cd455d-1238-4c79-9282-9fa8b6c3e4d5" name="Changes" comment="GG">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UML.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UML.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/BlinkingShapeDecorator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/Circle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/FillTypeDecorator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/Plus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/Rectangle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/Shape.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/ShapeDecorator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/ShapeFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/Triangle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Приложение1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/HelloApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/labs_tasks/HelloController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/labs_tasks/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/labs_tasks/hello-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +77,7 @@
     "Application.HelloApplication.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Merging main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/User/IdeaProjects/Labs_Tasks",
@@ -71,17 +86,6 @@
     "project.structure.side.proportion": "0.0"
   }
 }]]></component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -219,7 +223,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744018900001</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields">
+      <option name="closed" value="true" />
+      <created>1744021850934</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1744021850934</updated>
+    </task>
+    <task id="LOCAL-00018" summary="GG">
+      <option name="closed" value="true" />
+      <created>1744021882368</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1744021882368</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -233,6 +253,7 @@
     <MESSAGE value="Solving gradient bugs" />
     <MESSAGE value="README and UML" />
     <MESSAGE value="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields" />
-    <option name="LAST_COMMIT_MESSAGE" value="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields" />
+    <MESSAGE value="GG" />
+    <option name="LAST_COMMIT_MESSAGE" value="GG" />
   </component>
 </project>
