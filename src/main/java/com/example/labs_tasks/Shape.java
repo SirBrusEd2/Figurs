@@ -5,19 +5,28 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public abstract class Shape {
+    protected int x;
+    protected int y;
     protected Color color;
-    protected Paint gradient; // Поле для градиента
+    protected Paint gradient;
     protected boolean hasAnimation;
 
-    public Shape(Color color) {
+    // Исправленный конструктор
+    public Shape(int x, int y, Color color) {
+        this.x = x;
+        this.y = y;
         this.color = color;
     }
 
     public abstract void draw(GraphicsContext gc, double x, double y, double opacity);
 
-    public abstract int getX();
+    public int getX() {
+        return x;
+    }
 
-    public abstract int getY();
+    public int getY() {
+        return y;
+    }
 
     public void setHasAnimation(boolean hasAnimation) {
         this.hasAnimation = hasAnimation;

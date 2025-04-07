@@ -4,12 +4,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 class Circle extends Shape {
-    int x, y, r;
+    int r;
 
     Circle(int x, int y, int r, Color color) {
-        super(color);
-        this.x = x;
-        this.y = y;
+        super(x, y, color);
         this.r = r;
     }
 

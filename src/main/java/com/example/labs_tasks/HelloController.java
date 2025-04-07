@@ -220,18 +220,18 @@ public class HelloController {
     }
 
     private void drawPlus(double x, double y) {
-        Shape plus = shapeFactory.createPlus((int) x, (int) y, plusSize, plusSize, plusSize, plusSize, currentColor);
+        Shape plus = shapeFactory.createPlus((int)x, (int)y, plusSize, currentColor);
+
         if (currentBrushType.equals("Градиент")) {
-            // Создаем градиент для плюса
             LinearGradient gradient = new LinearGradient(
                     0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                     new Stop(0, Color.WHITE),
                     new Stop(1, currentColor)
             );
-            plus.setGradient(gradient); // Сохраняем градиент в фигуре
+            plus.setGradient(gradient);
         }
-        plus.setHasAnimation(isBlinking); // Устанавливаем состояние анимации
-        shapes.add(plus); // Добавляем фигуру в список всех фигур
+        plus.setHasAnimation(isBlinking);
+        shapes.add(plus);
         drawShape(plus, gc, x, y, opacity);
     }
 
@@ -292,12 +292,12 @@ public class HelloController {
         triangleSide = size;
         rectangleWidth = (int) size;
         rectangleHeight = (int) size;
-        plusSize = size;
+        plusSize = size; // Обновляем только общий размер
 
         shapeStepMap.put("круг", (double) circleRadius);
         shapeStepMap.put("треугольник", triangleSide);
         shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
-        shapeStepMap.put("плюс", plusSize);
+        shapeStepMap.put("плюс", plusSize * 0.3); // Шаг соответствует толщине линии
     }
 
     private void startBlinking() {

@@ -16,7 +16,15 @@ public class ShapeFactory {
         return new Rectangle(x, y, w, h, color);
     }
 
-    public Shape createPlus(int x, int y, double px, double mx, double py, double my, Color color) {
-        return new Plus(x, y, px, mx, py, my, color);
+    public Shape createPlus(int x, int y, double size, Color color) {
+        double thickness = size * 0.3; // Сохраняем ваши пропорции
+        return new Plus(
+                x, y,
+                thickness,  // px (ширина вертикальной линии)
+                size,       // mx (длина горизонтальной линии)
+                size,       // py (длина вертикальной линии)
+                thickness,  // my (высота горизонтальной линии)
+                color
+        );
     }
 }
