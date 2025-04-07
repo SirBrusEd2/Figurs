@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="96cd455d-1238-4c79-9282-9fa8b6c3e4d5" name="Changes" comment="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;SirBrusEd2&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/SirBrusEd2/Figurs.git&quot;,
+    &quot;accountId&quot;: &quot;e49c717e-5a96-4335-845a-c488d0022237&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2oCBj3kR57dEYcKuLqemmX0PrdK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.HelloApplication.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/User/IdeaProjects/Labs_Tasks",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="96cd455d-1238-4c79-9282-9fa8b6c3e4d5" name="Changes" comment="" />
+      <created>1730363811721</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1730363811721</updated>
+    </task>
+    <task id="LOCAL-00001" summary="first commit">
+      <option name="closed" value="true" />
+      <created>1730364425005</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730364425005</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Creating shapes for drawing and using the factory method and the keeper">
+      <option name="closed" value="true" />
+      <created>1730627195277</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730627195277</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Creating shapes for drawing and using the factory method and the keeper">
+      <option name="closed" value="true" />
+      <created>1730627310314</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1730627310314</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Creating shapes for drawing and using the factory method and the keeper">
+      <option name="closed" value="true" />
+      <created>1730628030875</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730628030875</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Creating shapes for drawing and using the factory method and the keeper">
+      <option name="closed" value="true" />
+      <created>1731520511691</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1731520511691</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Adding a queue and a hashmap">
+      <option name="closed" value="true" />
+      <created>1731851321871</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1731851321872</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Adding ComboBox">
+      <option name="closed" value="true" />
+      <created>1732509927737</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732509927737</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Adding Size">
+      <option name="closed" value="true" />
+      <created>1733774688632</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1733774688632</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Removing buttons and adding a list of colors">
+      <option name="closed" value="true" />
+      <created>1733775117584</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1733775117584</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Adding animations">
+      <option name="closed" value="true" />
+      <created>1733817574261</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1733817574261</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Solving gradient bugs">
+      <option name="closed" value="true" />
+      <created>1733819601273</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1733819601273</updated>
+    </task>
+    <task id="LOCAL-00012" summary="README and UML">
+      <option name="closed" value="true" />
+      <created>1733980144241</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1733980144241</updated>
+    </task>
+    <task id="LOCAL-00013" summary="README and UML">
+      <option name="closed" value="true" />
+      <created>1734784045448</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1734784045448</updated>
+    </task>
+    <task id="LOCAL-00014" summary="README and UML">
+      <option name="closed" value="true" />
+      <created>1734784537689</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1734784537689</updated>
+    </task>
+    <task id="LOCAL-00015" summary="README and UML">
+      <option name="closed" value="true" />
+      <created>1734784773998</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1734784773998</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields">
+      <option name="closed" value="true" />
+      <created>1744018900001</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1744018900001</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit" />
+    <MESSAGE value="Creating shapes for drawing and using the factory method and the keeper" />
+    <MESSAGE value="Adding a queue and a hashmap" />
+    <MESSAGE value="Adding ComboBox" />
+    <MESSAGE value="Adding Size" />
+    <MESSAGE value="Removing buttons and adding a list of colors" />
+    <MESSAGE value="Adding animations" />
+    <MESSAGE value="Solving gradient bugs" />
+    <MESSAGE value="README and UML" />
+    <MESSAGE value="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields" />
+    <option name="LAST_COMMIT_MESSAGE" value="Solving 2 problems. 1) Brush display Plus 2) Inheritance of drawing fields" />
+  </component>
+</project>
