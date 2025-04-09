@@ -109,7 +109,13 @@ public class HelloController {
         shapeComboBox.setOnAction(event -> currentShape = shapeComboBox.getValue());
 
         // Настройка ColorPicker
-        colorPicker.setOnAction(event -> setColor(colorPicker.getValue()));
+        colorPicker.setOnAction(event -> {
+            if (!selectedComponents.getChildren().isEmpty()) {
+                handleColorChange();
+            } else {
+                currentColor = colorPicker.getValue();
+            }
+        });
 
         // Настройка Undo
         undoButton.setOnAction(event -> undoLastAction());
@@ -237,6 +243,8 @@ public class HelloController {
                     new Stop(1, currentColor)
             );
             shape.setGradient(gradient);
+        } else {
+            shape.setGradient(null); // Сбрасываем градиент, если тип кисти изменён
         }
         shape.setHasAnimation(isBlinking);
     }

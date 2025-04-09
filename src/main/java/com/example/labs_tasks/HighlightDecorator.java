@@ -40,9 +40,16 @@ public class HighlightDecorator extends ShapeDecorator {
         return decoratedShape.contains(x, y);
     }
     public void setHighlightedColor(Color newColor) {
-        // Если decoratedShape является Shape, меняем его цвет
-        if (decoratedShape instanceof Shape) {
-            ((Shape) decoratedShape).color = newColor;
+        // Рекурсивно ищем базовую фигуру через цепочку декораторов
+        Shape baseShape = findBaseShape(decoratedShape);
+        baseShape.color = newColor;
+        baseShape.setGradient(null); // Сбрасываем градиент
+    }
+
+    private Shape findBaseShape(Shape shape) {
+        if (shape instanceof ShapeDecorator) {
+            return findBaseShape(((ShapeDecorator) shape).getDecoratedShape());
         }
+        return shape;
     }
 }

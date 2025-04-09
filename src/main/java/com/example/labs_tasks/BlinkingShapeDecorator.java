@@ -16,9 +16,10 @@ public class BlinkingShapeDecorator extends ShapeDecorator {
         if (isBlinking) {
             gc.setFill(Color.WHITE);
         } else {
+            // Берём актуальный цвет из базовой фигуры
             gc.setFill(decoratedShape.color);
         }
-        decoratedShape.draw(gc, x, y, opacity);
+        super.draw(gc, x, y, opacity);
         isBlinking = !isBlinking;
     }
 
