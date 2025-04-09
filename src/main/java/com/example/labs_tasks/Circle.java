@@ -1,5 +1,6 @@
 package com.example.labs_tasks;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -14,22 +15,28 @@ class Circle extends Shape {
     @Override
     public void draw(GraphicsContext gc, double x, double y, double opacity) {
         if (gradient != null) {
-            gc.setFill(gradient); // Используем градиент, если он есть
+            gc.setFill(gradient);
         } else {
-            gc.setFill(color); // Иначе используем обычный цвет
+            gc.setFill(color);
         }
-        gc.setGlobalAlpha(opacity); // Устанавливаем прозрачность
+        gc.setGlobalAlpha(opacity);
         gc.fillOval(x - r, y - r, 2 * r, 2 * r);
-        gc.setGlobalAlpha(1.0); // Сбрасываем прозрачность
+        gc.setGlobalAlpha(1.0);
     }
 
     @Override
-    public int getX() {
-        return x;
+    public boolean contains(double x, double y) {
+        double dx = x - this.x;
+        double dy = y - this.y;
+        return dx*dx + dy*dy <= r*r;
     }
 
     @Override
-    public int getY() {
-        return y;
+    public Rectangle2D getBounds() {
+        return new Rectangle2D(x - r, y - r, 2*r, 2*r);
+    }
+    @Override
+    public void drawStroke(GraphicsContext gc, double x, double y) {
+        gc.strokeOval(x - r, y - r, 2 * r, 2 * r);
     }
 }
