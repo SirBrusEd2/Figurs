@@ -152,14 +152,15 @@ public class HelloController {
         canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             if (isSelecting) {
                 isSelecting = false;
-
-                // Определение границ выделения
                 double minX = Math.min(selectionStartX, selectionEndX);
                 double maxX = Math.max(selectionStartX, selectionEndX);
                 double minY = Math.min(selectionStartY, selectionEndY);
                 double maxY = Math.max(selectionStartY, selectionEndY);
 
-                // Добавление выделенных фигур
+                // Удаляем предыдущее выделение
+                selectedComponents = new Composite();
+
+                // Добавляем ТОЛЬКО декораторы, не копируя фигуры
                 shapes.stream()
                         .filter(shape -> shape.intersects(minX, minY, maxX, maxY))
                         .forEach(shape ->
@@ -372,17 +373,13 @@ public class HelloController {
     private void redraw() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // Рисуем обычные фигуры
-        shapes.forEach(s -> {
-            if (!selectedComponents.containsComponent(s)) {
-                s.draw(gc, s.hasAnimation() ? opacity : 1.0);
-            }
-        });
+        // 1. Рисуем ВСЕ фигуры из списка shapes (включая перемещённые)
+        shapes.forEach(s -> s.draw(gc, s.hasAnimation() ? opacity : 1.0));
 
-        // Рисуем выделенные фигуры
+        // 2. Рисуем выделение поверх фигур
         selectedComponents.draw(gc, 1.0);
 
-        // Рисуем рамку выделения
+        // 3. Рисуем рамку выделения (если нужно)
         if (isSelecting) {
             gc.setStroke(Color.BLUE);
             gc.setLineWidth(2);
