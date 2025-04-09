@@ -51,65 +51,131 @@ public class HelloController {
     private List<Shape> shapes = new ArrayList<>();
     private List<Shape> removedShapes = new ArrayList<>();
     private Composite selectedComponents = new Composite();
-    private double startX, startY;
     private double selectionStartX, selectionStartY;
     private double selectionEndX, selectionEndY;
     private boolean isSelecting = false;
+    private boolean isMoving = false;
+    private double moveStartX, moveStartY;
+    private List<Double> initialShapeX = new ArrayList<>();
+    private List<Double> initialShapeY = new ArrayList<>();
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
         shapeFactory = new ShapeFactory();
 
-        // Обработчики событий рисования
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed);
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
+        // Обработчики для левой кнопки (рисование + перемещение)
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.isPrimaryButtonDown()) {
+                if (!selectedComponents.getChildren().isEmpty()) {
+                    // Начало перемещения выделенных объектов
+                    isMoving = true;
+                    moveStartX = event.getX();
+                    moveStartY = event.getY();
 
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            if (e.isSecondaryButtonDown()) {
-                isSelecting = true;
-                selectionStartX = e.getX();
-                selectionStartY = e.getY();
-                selectionEndX = selectionStartX;
-                selectionEndY = selectionStartY;
-                selectedComponents = new Composite(); // Сброс предыдущего выделения
+                    // Сохраняем начальные позиции
+                    initialShapeX.clear();
+                    initialShapeY.clear();
+                    selectedComponents.getChildren().forEach(component -> {
+                        if (component instanceof HighlightDecorator) {
+                            Shape shape = ((HighlightDecorator) component).getDecoratedShape();
+                            initialShapeX.add((double) shape.getX());
+                            initialShapeY.add((double) shape.getY());
+                        }
+                    });
+                } else {
+                    // Начало рисования
+                    isDrawing = true;
+                    lastX = event.getX();
+                    lastY = event.getY();
+                    drawShape(lastX, lastY);
+                }
             }
         });
 
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            if (isMoving) {
+                // Перемещение выделенных объектов
+                double deltaX = event.getX() - moveStartX;
+                double deltaY = event.getY() - moveStartY;
+
+                for (int i = 0; i < selectedComponents.getChildren().size(); i++) {
+                    Component component = selectedComponents.getChildren().get(i);
+                    if (component instanceof HighlightDecorator) {
+                        Shape shape = ((HighlightDecorator) component).getDecoratedShape();
+                        shape.setX((int) (initialShapeX.get(i) + deltaX));
+                        shape.setY((int) (initialShapeY.get(i) + deltaY));
+                    }
+                }
+                redraw();
+            } else if (isDrawing) {
+                // Рисование
+                double newX = event.getX();
+                double newY = event.getY();
+                drawLine(lastX, lastY, newX, newY);
+                lastX = newX;
+                lastY = newY;
+            }
+        });
+
+        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+            if (isMoving) {
+                // Завершение перемещения
+                isMoving = false;
+                initialShapeX.clear();
+                initialShapeY.clear();
+            } else if (isDrawing) {
+                // Завершение рисования
+                isDrawing = false;
+            }
+        });
+
+        // Обработчики для правой кнопки (выделение)
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.isSecondaryButtonDown()) {
+                isSelecting = true;
+                selectionStartX = event.getX();
+                selectionStartY = event.getY();
+                selectionEndX = selectionStartX;
+                selectionEndY = selectionStartY;
+                selectedComponents = new Composite();
+            }
+        });
+
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             if (isSelecting) {
-                selectionEndX = e.getX();
-                selectionEndY = e.getY();
+                selectionEndX = event.getX();
+                selectionEndY = event.getY();
                 redraw();
             }
         });
 
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
+        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             if (isSelecting) {
                 isSelecting = false;
 
-                // Определяем границы выделения
+                // Определение границ выделения
                 double minX = Math.min(selectionStartX, selectionEndX);
                 double maxX = Math.max(selectionStartX, selectionEndX);
                 double minY = Math.min(selectionStartY, selectionEndY);
                 double maxY = Math.max(selectionStartY, selectionEndY);
 
-                // Выделяем фигуры, пересекающиеся с областью
+                // Добавление выделенных фигур
                 shapes.stream()
                         .filter(shape -> shape.intersects(minX, minY, maxX, maxY))
                         .forEach(shape ->
-                                selectedComponents.add(new HighlightDecorator(shape, Color.RED)) // ✅ Исправлено
+                                selectedComponents.add(new HighlightDecorator(shape, Color.RED))
                         );
                 redraw();
             }
         });
+
         // Настройка ComboBox
         shapeComboBox.getItems().addAll("круг", "треугольник", "прямоугольник", "плюс");
         shapeComboBox.setValue("круг");
-        shapeComboBox.setOnAction(event -> currentShape = shapeComboBox.getValue());
+        shapeComboBox.setOnAction(e -> currentShape = shapeComboBox.getValue());
 
         // Настройка ColorPicker
-        colorPicker.setOnAction(event -> {
+        colorPicker.setOnAction(e -> {
             if (!selectedComponents.getChildren().isEmpty()) {
                 handleColorChange();
             } else {
@@ -118,12 +184,12 @@ public class HelloController {
         });
 
         // Настройка Undo
-        undoButton.setOnAction(event -> undoLastAction());
+        undoButton.setOnAction(e -> undoLastAction());
 
         // Настройка типа кисти
         brushTypeComboBox.getItems().addAll("Обычная кисть", "Градиент");
         brushTypeComboBox.setValue("Обычная кисть");
-        brushTypeComboBox.setOnAction(event -> currentBrushType = brushTypeComboBox.getValue());
+        brushTypeComboBox.setOnAction(e -> currentBrushType = brushTypeComboBox.getValue());
 
         // Настройка размера кисти
         brushSizeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -134,7 +200,7 @@ public class HelloController {
         });
 
         // Настройка анимации
-        animationCheckBox.setOnAction(event -> {
+        animationCheckBox.setOnAction(e -> {
             isBlinking = animationCheckBox.isSelected();
             if (isBlinking) startBlinking();
             else stopBlinking();
@@ -150,36 +216,18 @@ public class HelloController {
         shapeStepMap.put("треугольник", triangleSide);
         shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
         shapeStepMap.put("плюс", plusSize);
-        colorPicker.setOnAction(event -> {
-            if (!selectedComponents.getChildren().isEmpty()) {
-                handleColorChange(); // Вызываем метод изменения цвета
-            } else {
-                setColor(colorPicker.getValue()); // Стандартное поведение
-            }
-        });
     }
 
     private void handleMousePressed(MouseEvent event) {
-        if (event.isPrimaryButtonDown()) {
-            isDrawing = true;
-            lastX = event.getX();
-            lastY = event.getY();
-            drawShape(lastX, lastY);
-        }
+        // Обработка нажатия (уже интегрирована в initialize())
     }
 
     private void handleMouseDragged(MouseEvent event) {
-        if (isDrawing && event.isPrimaryButtonDown()) {
-            double newX = event.getX();
-            double newY = event.getY();
-            drawLine(lastX, lastY, newX, newY);
-            lastX = newX;
-            lastY = newY;
-        }
+        // Обработка перемещения (уже интегрирована в initialize())
     }
 
     private void handleMouseReleased(MouseEvent event) {
-        isDrawing = false;
+        // Обработка отпускания (уже интегрирована в initialize())
     }
 
     private void drawShape(double x, double y) {
@@ -213,7 +261,7 @@ public class HelloController {
         Shape triangle = shapeFactory.createTriangle(
                 (int) x,
                 (int) y,
-                triangleSide, // Только длина стороны
+                triangleSide,
                 currentColor
         );
         applyStyle(triangle);
@@ -222,14 +270,20 @@ public class HelloController {
     }
 
     private void drawRectangle(double x, double y) {
-        Shape rectangle = shapeFactory.createRectangle((int) x, (int) y, rectangleWidth, rectangleHeight, currentColor);
+        Shape rectangle = shapeFactory.createRectangle(
+                (int) x,
+                (int) y,
+                rectangleWidth,
+                rectangleHeight,
+                currentColor
+        );
         applyStyle(rectangle);
         shapes.add(rectangle);
         drawShape(rectangle, gc, x, y, opacity);
     }
 
     private void drawPlus(double x, double y) {
-        Shape plus = shapeFactory.createPlus((int)x, (int)y, plusSize, currentColor);
+        Shape plus = shapeFactory.createPlus((int) x, (int) y, plusSize, currentColor);
         applyStyle(plus);
         shapes.add(plus);
         drawShape(plus, gc, x, y, opacity);
@@ -244,7 +298,7 @@ public class HelloController {
             );
             shape.setGradient(gradient);
         } else {
-            shape.setGradient(null); // Сбрасываем градиент, если тип кисти изменён
+            shape.setGradient(null);
         }
         shape.setHasAnimation(isBlinking);
     }
@@ -298,7 +352,7 @@ public class HelloController {
 
     private void startBlinking() {
         blinkTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(0.5), event -> {
+                new KeyFrame(Duration.seconds(0.5), e -> {
                     opacity = opacity == 1.0 ? 0.0 : 1.0;
                     redraw();
                 })
@@ -318,18 +372,17 @@ public class HelloController {
     private void redraw() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // 1. Рисуем все обычные фигуры
+        // Рисуем обычные фигуры
         shapes.forEach(s -> {
-            // ИСПРАВЛЕНИЕ: Заменено contains() на containsComponent()
             if (!selectedComponents.containsComponent(s)) {
                 s.draw(gc, s.hasAnimation() ? opacity : 1.0);
             }
         });
 
-        // 2. Рисуем выделенные фигуры поверх остальных
+        // Рисуем выделенные фигуры
         selectedComponents.draw(gc, 1.0);
 
-        // 3. Рисуем рамку выделения
+        // Рисуем рамку выделения
         if (isSelecting) {
             gc.setStroke(Color.BLUE);
             gc.setLineWidth(2);
@@ -340,11 +393,11 @@ public class HelloController {
             gc.strokeRect(x, y, width, height);
         }
     }
+
     @FXML
     private void handleColorChange() {
         if (!selectedComponents.getChildren().isEmpty()) {
             Color newColor = colorPicker.getValue();
-            // Меняем цвет всех выделенных фигур
             selectedComponents.getChildren().forEach(component -> {
                 if (component instanceof HighlightDecorator) {
                     ((HighlightDecorator) component).setHighlightedColor(newColor);

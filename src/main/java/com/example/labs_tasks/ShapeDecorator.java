@@ -20,4 +20,15 @@ public abstract class ShapeDecorator extends Shape {
     public Shape getDecoratedShape() {
         return decoratedShape;
     }
+    @Override
+    public void setX(int x) {
+        decoratedShape.setX(x);
+        super.setX(x); // Обновляем координату декоратора
+    }
+
+    @Override
+    public void setY(int y) {
+        decoratedShape.setY(y);
+        super.setY(y);
+    }
 }
