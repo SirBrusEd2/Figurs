@@ -1,5 +1,10 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.factory;
 
+import com.example.labs_tasks.model.Shape;
+import com.example.labs_tasks.model.shapes.Circle;
+import com.example.labs_tasks.model.shapes.Plus;
+import com.example.labs_tasks.model.shapes.Rectangle;
+import com.example.labs_tasks.model.shapes.Triangle;
 import javafx.scene.paint.Color;
 
 public class ShapeFactory {

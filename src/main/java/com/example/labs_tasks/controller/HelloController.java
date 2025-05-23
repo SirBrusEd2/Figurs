@@ -1,5 +1,10 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.controller;
 
+import com.example.labs_tasks.decorator.HighlightDecorator;
+import com.example.labs_tasks.factory.ShapeFactory;
+import com.example.labs_tasks.model.Shape;
+import com.example.labs_tasks.model.composite.Component;
+import com.example.labs_tasks.model.composite.Composite;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;

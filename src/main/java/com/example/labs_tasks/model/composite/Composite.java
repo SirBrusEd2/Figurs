@@ -1,4 +1,4 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.model.composite;
 
 import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;

@@ -1,14 +1,15 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.model.shapes;
 
+import com.example.labs_tasks.model.Shape;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-class Triangle extends Shape {
+public class Triangle extends Shape {
     private double side; // Длина стороны равностороннего треугольника
 
     // Конструктор с параметрами: координаты (x, y), длина стороны, цвет
-    Triangle(int x, int y, double side, Color color) {
+    public Triangle(int x, int y, double side, Color color) {
         super(x, y, color);
         this.side = side;
     }

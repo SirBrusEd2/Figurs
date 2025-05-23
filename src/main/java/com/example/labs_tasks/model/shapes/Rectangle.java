@@ -1,14 +1,15 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.model.shapes;
 
+import com.example.labs_tasks.model.Shape;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-class Rectangle extends Shape {
+public class Rectangle extends Shape {
     private int width;
     private int height;
 
-    Rectangle(int x, int y, int width, int height, Color color) {
+    public Rectangle(int x, int y, int width, int height, Color color) {
         super(x, y, color);
         this.width = width;
         this.height = height;

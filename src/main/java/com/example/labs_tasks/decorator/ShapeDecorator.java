@@ -1,5 +1,6 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.decorator;
 
+import com.example.labs_tasks.model.Shape;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class ShapeDecorator extends Shape {

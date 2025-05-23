@@ -1,5 +1,7 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.decorator;
 
+import com.example.labs_tasks.model.Shape;
+import com.example.labs_tasks.model.composite.Component;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import javafx.geometry.Rectangle2D;

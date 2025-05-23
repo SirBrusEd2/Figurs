@@ -1,19 +1,20 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.model.shapes;
 
+import com.example.labs_tasks.model.Shape;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-class Plus extends Shape {
+public class Plus extends Shape {
     private double verticalWidth;
     private double verticalHeight;
     private double horizontalWidth;
     private double horizontalHeight;
 
-    Plus(int x, int y,
-         double verticalWidth, double verticalHeight,
-         double horizontalWidth, double horizontalHeight,
-         Color color) {
+    public Plus(int x, int y,
+                double verticalWidth, double verticalHeight,
+                double horizontalWidth, double horizontalHeight,
+                Color color) {
         super(x, y, color);
         this.verticalWidth = verticalWidth;
         this.verticalHeight = verticalHeight;

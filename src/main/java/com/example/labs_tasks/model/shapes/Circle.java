@@ -1,13 +1,14 @@
-package com.example.labs_tasks;
+package com.example.labs_tasks.model.shapes;
 
+import com.example.labs_tasks.model.Shape;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-class Circle extends Shape {
+public class Circle extends Shape {
     int r;
 
-    Circle(int x, int y, int r, Color color) {
+    public Circle(int x, int y, int r, Color color) {
         super(x, y, color);
         this.r = r;
     }
