@@ -1,28 +1,22 @@
 package com.example.labs_tasks.factory;
 
 import com.example.labs_tasks.model.Shape;
-import com.example.labs_tasks.model.shapes.Circle;
-import com.example.labs_tasks.model.shapes.Plus;
-import com.example.labs_tasks.model.shapes.Rectangle;
-import com.example.labs_tasks.model.shapes.Triangle;
+import com.example.labs_tasks.model.shapes.*;
 import javafx.scene.paint.Color;
 
 public class ShapeFactory {
-    // Исправленный метод createTriangle с 4 параметрами
-    public Shape createTriangle(int x, int y, double side, Color color) {
-        return new Triangle(x, y, side, color); // 4 параметра
-    }
-
-    public Shape createCircle(int x, int y, int r, Color color) {
-        return new Circle(x, y, r, color);
-    }
-
-    public Shape createRectangle(int x, int y, int w, int h, Color color) {
-        return new Rectangle(x, y, w, h, color);
-    }
-
-    public Shape createPlus(int x, int y, double size, Color color) {
-        double thickness = size * 0.3;
-        return new Plus(x, y, thickness, size, size, thickness, color);
+    public Shape createShape(int shapeType) {
+        switch (shapeType) {
+            case 1: // Круг (было 0)
+                return new Circle(0, 0, 10, Color.BLACK);
+            case 2: // Треугольник (было 3)
+                return new Triangle(0, 0, 10, Color.BLACK);
+            case 3: // Прямоугольник (было 4)
+                return new Rectangle(0, 0, 10, 10, Color.BLACK);
+            case 4: // Плюс (было 2)
+                return new Plus(0, 0, 3, 10, 10, 3, Color.BLACK);
+            default:
+                return null;
+        }
     }
 }

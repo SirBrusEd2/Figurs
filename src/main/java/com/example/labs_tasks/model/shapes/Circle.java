@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Circle extends Shape {
-    int r;
+    private int r;
 
     public Circle(int x, int y, int r, Color color) {
         super(x, y, color);
@@ -36,8 +36,13 @@ public class Circle extends Shape {
     public Rectangle2D getBounds() {
         return new Rectangle2D(x - r, y - r, 2*r, 2*r);
     }
+
     @Override
     public void drawStroke(GraphicsContext gc, double x, double y) {
         gc.strokeOval(x - r, y - r, 2 * r, 2 * r);
+    }
+
+    public void setRadius(int radius) {
+        this.r = radius;
     }
 }

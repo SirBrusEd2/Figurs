@@ -1,7 +1,6 @@
 package com.example.labs_tasks.decorator;
 
 import com.example.labs_tasks.model.Shape;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -16,41 +15,13 @@ public class HighlightDecorator extends ShapeDecorator {
 
     @Override
     public void draw(GraphicsContext gc, double x, double y, double opacity) {
-        // Рисуем оригинальную фигуру
         super.draw(gc, x, y, opacity);
-
-        // Добавляем контур выделения
         gc.setStroke(highlightColor);
         gc.setLineWidth(strokeWidth);
-        decoratedShape.drawStroke(gc, x, y); // Вызываем метод обводки
+        super.drawStroke(gc, x, y);
     }
 
-    // Реализация метода drawStroke (делегируем вызов decoratedShape)
-    @Override
-    public void drawStroke(GraphicsContext gc, double x, double y) {
-        decoratedShape.drawStroke(gc, x, y);
-    }
-
-    @Override
-    public Rectangle2D getBounds() {
-        return decoratedShape.getBounds();
-    }
-
-    @Override
-    public boolean contains(double x, double y) {
-        return decoratedShape.contains(x, y);
-    }
     public void setHighlightedColor(Color newColor) {
-        // Рекурсивно ищем базовую фигуру через цепочку декораторов
-        Shape baseShape = findBaseShape(decoratedShape);
-        baseShape.color = newColor;
-        baseShape.setGradient(null); // Сбрасываем градиент
-    }
-
-    private Shape findBaseShape(Shape shape) {
-        if (shape instanceof ShapeDecorator) {
-            return findBaseShape(((ShapeDecorator) shape).getDecoratedShape());
-        }
-        return shape;
+        this.highlightColor = newColor;
     }
 }

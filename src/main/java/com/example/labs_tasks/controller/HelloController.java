@@ -36,25 +36,19 @@ public class HelloController {
 
     private GraphicsContext gc;
     private ShapeFactory shapeFactory;
-    private int circleRadius = 5;
-    private double triangleSide = 10;
-    private int rectangleWidth = 10;
-    private int rectangleHeight = 10;
-    private double plusSize = 10;
     private Color currentColor = Color.BLACK;
     private boolean isDrawing = false;
     private double lastX, lastY;
-    private String currentShape = "круг";
+    private String currentShapeType = "круг";
     private String currentBrushType = "Обычная кисть";
     private boolean isBlinking = false;
     private Timeline blinkTimeline;
     private double opacity = 1.0;
 
     private Deque<Runnable> undoStack = new ArrayDeque<>();
-    private Map<String, Runnable> shapeMap = new HashMap<>();
-    private Map<String, Double> shapeStepMap = new HashMap<>();
+    private Map<String, Integer> shapeSidesMap = new HashMap<>();
+    private Map<String, Double> shapeSizeMap = new HashMap<>();
     private List<Shape> shapes = new ArrayList<>();
-    private List<Shape> removedShapes = new ArrayList<>();
     private Composite selectedComponents = new Composite();
     private double selectionStartX, selectionStartY;
     private double selectionEndX, selectionEndY;
@@ -68,124 +62,34 @@ public class HelloController {
         gc = canvas.getGraphicsContext2D();
         shapeFactory = new ShapeFactory();
 
-        // Обработчики для левой кнопки (рисование + перемещение)
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            if (event.isPrimaryButtonDown()) {
-                if (!selectedComponents.getChildren().isEmpty()) {
-                    // Начало перемещения выделенных объектов
-                    isMoving = true;
-                    moveStartX = event.getX();
-                    moveStartY = event.getY();
+        // Соответствие между названием фигуры и числом сторон
+        shapeSidesMap.put("круг", 1);
+        shapeSidesMap.put("треугольник", 2);
+        shapeSidesMap.put("прямоугольник", 3);
+        shapeSidesMap.put("плюс", 4);
 
-                    // Сохраняем начальные позиции
-                    initialShapeX.clear();
-                    initialShapeY.clear();
-                    selectedComponents.getChildren().forEach(component -> {
-                        if (component instanceof HighlightDecorator) {
-                            Shape shape = ((HighlightDecorator) component).getDecoratedShape();
-                            initialShapeX.add((double) shape.getX());
-                            initialShapeY.add((double) shape.getY());
-                        }
-                    });
-                } else {
-                    // Начало рисования
-                    isDrawing = true;
-                    lastX = event.getX();
-                    lastY = event.getY();
-                    drawShape(lastX, lastY);
-                }
-            }
-        });
+        // Размеры по умолчанию для каждой фигуры
+        shapeSizeMap.put("круг", 10.0);
+        shapeSizeMap.put("треугольник", 10.0);
+        shapeSizeMap.put("прямоугольник", 10.0);
+        shapeSizeMap.put("плюс", 10.0);
 
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (isMoving) {
-                // Перемещение выделенных объектов
-                double deltaX = event.getX() - moveStartX;
-                double deltaY = event.getY() - moveStartY;
-
-                for (int i = 0; i < selectedComponents.getChildren().size(); i++) {
-                    Component component = selectedComponents.getChildren().get(i);
-                    if (component instanceof HighlightDecorator) {
-                        Shape shape = ((HighlightDecorator) component).getDecoratedShape();
-                        shape.setX((int) (initialShapeX.get(i) + deltaX));
-                        shape.setY((int) (initialShapeY.get(i) + deltaY));
-                    }
-                }
-                redraw();
-            } else if (isDrawing) {
-                // Рисование
-                double newX = event.getX();
-                double newY = event.getY();
-                drawLine(lastX, lastY, newX, newY);
-                lastX = newX;
-                lastY = newY;
-            }
-        });
-
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            if (isMoving) {
-                // Завершение перемещения
-                isMoving = false;
-                initialShapeX.clear();
-                initialShapeY.clear();
-            } else if (isDrawing) {
-                // Завершение рисования
-                isDrawing = false;
-            }
-        });
-
-        // Обработчики для правой кнопки (выделение)
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            if (event.isSecondaryButtonDown()) {
-                isSelecting = true;
-                selectionStartX = event.getX();
-                selectionStartY = event.getY();
-                selectionEndX = selectionStartX;
-                selectionEndY = selectionStartY;
-                selectedComponents = new Composite();
-            }
-        });
-
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (isSelecting) {
-                selectionEndX = event.getX();
-                selectionEndY = event.getY();
-                redraw();
-            }
-        });
-
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            if (isSelecting) {
-                isSelecting = false;
-                double minX = Math.min(selectionStartX, selectionEndX);
-                double maxX = Math.max(selectionStartX, selectionEndX);
-                double minY = Math.min(selectionStartY, selectionEndY);
-                double maxY = Math.max(selectionStartY, selectionEndY);
-
-                // Удаляем предыдущее выделение
-                selectedComponents = new Composite();
-
-                // Добавляем ТОЛЬКО декораторы, не копируя фигуры
-                shapes.stream()
-                        .filter(shape -> shape.intersects(minX, minY, maxX, maxY))
-                        .forEach(shape ->
-                                selectedComponents.add(new HighlightDecorator(shape, Color.RED))
-                        );
-                redraw();
-            }
-        });
+        // Обработчики событий мыши
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed);
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
+        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
 
         // Настройка ComboBox
         shapeComboBox.getItems().addAll("круг", "треугольник", "прямоугольник", "плюс");
         shapeComboBox.setValue("круг");
-        shapeComboBox.setOnAction(e -> currentShape = shapeComboBox.getValue());
+        shapeComboBox.setOnAction(e -> currentShapeType = shapeComboBox.getValue());
 
         // Настройка ColorPicker
+        colorPicker.setValue(currentColor);
         colorPicker.setOnAction(e -> {
+            currentColor = colorPicker.getValue();
             if (!selectedComponents.getChildren().isEmpty()) {
                 handleColorChange();
-            } else {
-                currentColor = colorPicker.getValue();
             }
         });
 
@@ -198,10 +102,13 @@ public class HelloController {
         brushTypeComboBox.setOnAction(e -> currentBrushType = brushTypeComboBox.getValue());
 
         // Настройка размера кисти
+        brushSizeTextField.setText("10");
         brushSizeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 int size = Integer.parseInt(newValue);
-                if (size >= 1 && size <= 200) updateBrushSize(size);
+                if (size >= 1 && size <= 200) {
+                    updateBrushSize(size);
+                }
             } catch (NumberFormatException ignored) {}
         });
 
@@ -211,88 +118,88 @@ public class HelloController {
             if (isBlinking) startBlinking();
             else stopBlinking();
         });
-
-        // Инициализация фигур
-        shapeMap.put("круг", () -> drawCircle(lastX, lastY));
-        shapeMap.put("треугольник", () -> drawTriangle(lastX, lastY));
-        shapeMap.put("прямоугольник", () -> drawRectangle(lastX, lastY));
-        shapeMap.put("плюс", () -> drawPlus(lastX, lastY));
-
-        shapeStepMap.put("круг", (double) circleRadius);
-        shapeStepMap.put("треугольник", triangleSide);
-        shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
-        shapeStepMap.put("плюс", plusSize);
     }
 
     private void handleMousePressed(MouseEvent event) {
-        // Обработка нажатия (уже интегрирована в initialize())
+        if (event.isPrimaryButtonDown()) {
+            if (!selectedComponents.getChildren().isEmpty()) {
+                startMovingSelection(event.getX(), event.getY());
+            } else {
+                startDrawing(event.getX(), event.getY());
+            }
+        } else if (event.isSecondaryButtonDown()) {
+            startSelection(event.getX(), event.getY());
+        }
     }
 
     private void handleMouseDragged(MouseEvent event) {
-        // Обработка перемещения (уже интегрирована в initialize())
+        if (isMoving) {
+            moveSelection(event.getX(), event.getY());
+        } else if (isDrawing) {
+            continueDrawing(event.getX(), event.getY());
+        } else if (isSelecting) {
+            updateSelection(event.getX(), event.getY());
+        }
     }
 
     private void handleMouseReleased(MouseEvent event) {
-        // Обработка отпускания (уже интегрирована в initialize())
+        if (isMoving) {
+            stopMoving();
+        } else if (isSelecting) {
+            completeSelection();
+        }
+        isDrawing = false;
+    }
+
+    private void startDrawing(double x, double y) {
+        isDrawing = true;
+        lastX = x;
+        lastY = y;
+        drawShape(x, y);
+    }
+
+    private void continueDrawing(double x, double y) {
+        drawLine(lastX, lastY, x, y);
+        lastX = x;
+        lastY = y;
     }
 
     private void drawShape(double x, double y) {
-        Runnable shapeAction = shapeMap.get(currentShape);
-        if (shapeAction != null) {
-            shapeAction.run();
-            undoStack.push(() -> clearShape(x, y));
+        Shape shape = createNewShape(x, y);
+        if (shape != null) {
+            shapes.add(shape);
+            shape.draw(gc, x, y, opacity);
+            undoStack.push(() -> removeShapeAt(x, y));
         }
     }
 
-    private void clearShape(double x, double y) {
-        Shape shapeToRemove = shapes.stream()
-                .filter(shape -> shape.getX() == x && shape.getY() == y)
-                .findFirst()
-                .orElse(null);
-        if (shapeToRemove != null) {
-            shapes.remove(shapeToRemove);
-            removedShapes.add(shapeToRemove);
-            gc.clearRect(x - 10, y - 10, 20, 20);
+    private Shape createNewShape(double x, double y) {
+        Integer sides = shapeSidesMap.get(currentShapeType);
+        if (sides == null) return null;
+
+        Shape shape = shapeFactory.createShape(sides);
+        shape.setX((int)x);
+        shape.setY((int)y);
+        shape.color = currentColor;
+
+        // Установка размера в зависимости от типа фигуры
+        double size = shapeSizeMap.get(currentShapeType);
+        if (shape instanceof com.example.labs_tasks.model.shapes.Circle) {
+            ((com.example.labs_tasks.model.shapes.Circle) shape).setRadius((int)size);
+        } else if (shape instanceof com.example.labs_tasks.model.shapes.Triangle) {
+            ((com.example.labs_tasks.model.shapes.Triangle) shape).setSide(size);
+        } else if (shape instanceof com.example.labs_tasks.model.shapes.Rectangle) {
+            int intSize = (int)size;
+            ((com.example.labs_tasks.model.shapes.Rectangle) shape).setWidth(intSize);
+            ((com.example.labs_tasks.model.shapes.Rectangle) shape).setHeight(intSize);
+        } else if (shape instanceof com.example.labs_tasks.model.shapes.Plus) {
+            double thickness = size * 0.3;
+            ((com.example.labs_tasks.model.shapes.Plus) shape).setVerticalSize(thickness, size);
+            ((com.example.labs_tasks.model.shapes.Plus) shape).setHorizontalSize(size, thickness);
         }
-    }
 
-    private void drawCircle(double x, double y) {
-        Shape circle = shapeFactory.createCircle((int) x, (int) y, circleRadius, currentColor);
-        applyStyle(circle);
-        shapes.add(circle);
-        drawShape(circle, gc, x, y, opacity);
-    }
-
-    private void drawTriangle(double x, double y) {
-        Shape triangle = shapeFactory.createTriangle(
-                (int) x,
-                (int) y,
-                triangleSide,
-                currentColor
-        );
-        applyStyle(triangle);
-        shapes.add(triangle);
-        drawShape(triangle, gc, x, y, opacity);
-    }
-
-    private void drawRectangle(double x, double y) {
-        Shape rectangle = shapeFactory.createRectangle(
-                (int) x,
-                (int) y,
-                rectangleWidth,
-                rectangleHeight,
-                currentColor
-        );
-        applyStyle(rectangle);
-        shapes.add(rectangle);
-        drawShape(rectangle, gc, x, y, opacity);
-    }
-
-    private void drawPlus(double x, double y) {
-        Shape plus = shapeFactory.createPlus((int) x, (int) y, plusSize, currentColor);
-        applyStyle(plus);
-        shapes.add(plus);
-        drawShape(plus, gc, x, y, opacity);
+        applyStyle(shape);
+        return shape;
     }
 
     private void applyStyle(Shape shape) {
@@ -309,53 +216,103 @@ public class HelloController {
         shape.setHasAnimation(isBlinking);
     }
 
-    private void drawShape(Shape shape, GraphicsContext gc, double x, double y, double opacity) {
-        shape.draw(gc, x, y, opacity);
-    }
-
     private void drawLine(double startX, double startY, double endX, double endY) {
         double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-        double stepX = (endX - startX) / distance;
-        double stepY = (endY - startY) / distance;
-        double step = shapeStepMap.getOrDefault(currentShape, 1.0);
+        double step = shapeSizeMap.get(currentShapeType) / 2.0;
+        if (step <= 0) step = 1;
+
+        double stepX = (endX - startX) / distance * step;
+        double stepY = (endY - startY) / distance * step;
 
         for (double i = 0; i <= distance; i += step) {
-            double currentX = startX + stepX * i;
-            double currentY = startY + stepY * i;
-            drawShape(currentX, currentY);
+            drawShape(startX + stepX * i, startY + stepY * i);
         }
     }
 
-    private void setColor(Color color) {
-        currentColor = color;
-    }
+    private void removeShapeAt(double x, double y) {
+        Shape toRemove = shapes.stream()
+                .filter(s -> s.contains(x, y))
+                .findFirst()
+                .orElse(null);
 
-    private void undoLastAction() {
-        if (!undoStack.isEmpty()) {
-            stopBlinking();
-            Runnable lastAction = undoStack.pop();
-            lastAction.run();
-            if (!shapes.isEmpty()) {
-                Shape shapeToRemove = shapes.remove(shapes.size() - 1);
-                removedShapes.add(shapeToRemove);
-            }
+        if (toRemove != null) {
+            shapes.remove(toRemove);
             redraw();
-            if (isBlinking) startBlinking();
         }
     }
 
     private void updateBrushSize(double size) {
-        circleRadius = (int) size;
-        triangleSide = size;
-        rectangleWidth = (int) size;
-        rectangleHeight = (int) size;
-        plusSize = size;
-        shapeStepMap.put("круг", (double) circleRadius);
-        shapeStepMap.put("треугольник", triangleSide);
-        shapeStepMap.put("прямоугольник", (double) Math.max(rectangleWidth, rectangleHeight));
-        shapeStepMap.put("плюс", plusSize * 0.3);
+        shapeSizeMap.replaceAll((k, v) -> (double)size);
     }
 
+    // Методы для работы с выделением
+    private void startSelection(double x, double y) {
+        isSelecting = true;
+        selectionStartX = selectionEndX = x;
+        selectionStartY = selectionEndY = y;
+        selectedComponents = new Composite();
+    }
+
+    private void updateSelection(double x, double y) {
+        selectionEndX = x;
+        selectionEndY = y;
+        redraw();
+    }
+
+    private void completeSelection() {
+        isSelecting = false;
+        double minX = Math.min(selectionStartX, selectionEndX);
+        double maxX = Math.max(selectionStartX, selectionEndX);
+        double minY = Math.min(selectionStartY, selectionEndY);
+        double maxY = Math.max(selectionStartY, selectionEndY);
+
+        selectedComponents = new Composite();
+        shapes.stream()
+                .filter(shape -> shape.intersects(minX, minY, maxX, maxY))
+                .forEach(shape -> selectedComponents.add(new HighlightDecorator(shape, Color.RED)));
+
+        redraw();
+    }
+
+    // Методы для перемещения выделения
+    private void startMovingSelection(double x, double y) {
+        isMoving = true;
+        moveStartX = x;
+        moveStartY = y;
+        initialShapeX.clear();
+        initialShapeY.clear();
+
+        selectedComponents.getChildren().forEach(component -> {
+            if (component instanceof HighlightDecorator) {
+                Shape shape = ((HighlightDecorator) component).getDecoratedShape();
+                initialShapeX.add((double)shape.getX());
+                initialShapeY.add((double)shape.getY());
+            }
+        });
+    }
+
+    private void moveSelection(double x, double y) {
+        double deltaX = x - moveStartX;
+        double deltaY = y - moveStartY;
+
+        for (int i = 0; i < selectedComponents.getChildren().size(); i++) {
+            Component component = selectedComponents.getChildren().get(i);
+            if (component instanceof HighlightDecorator) {
+                Shape shape = ((HighlightDecorator) component).getDecoratedShape();
+                shape.setX((int)(initialShapeX.get(i) + deltaX));
+                shape.setY((int)(initialShapeY.get(i) + deltaY));
+            }
+        }
+        redraw();
+    }
+
+    private void stopMoving() {
+        isMoving = false;
+        initialShapeX.clear();
+        initialShapeY.clear();
+    }
+
+    // Методы для анимации
     private void startBlinking() {
         blinkTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(0.5), e -> {
@@ -375,16 +332,36 @@ public class HelloController {
         }
     }
 
+    // Другие вспомогательные методы
+    private void undoLastAction() {
+        if (!undoStack.isEmpty()) {
+            stopBlinking();
+            undoStack.pop().run();
+            if (isBlinking) startBlinking();
+        }
+    }
+
+    @FXML
+    private void handleColorChange() {
+        Color newColor = colorPicker.getValue();
+        selectedComponents.getChildren().forEach(component -> {
+            if (component instanceof HighlightDecorator) {
+                ((HighlightDecorator) component).setHighlightedColor(newColor);
+            }
+        });
+        redraw();
+    }
+
     private void redraw() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // 1. Рисуем ВСЕ фигуры из списка shapes (включая перемещённые)
-        shapes.forEach(s -> s.draw(gc, s.hasAnimation() ? opacity : 1.0));
+        // Рисуем все фигуры
+        shapes.forEach(shape -> shape.draw(gc, shape.hasAnimation() ? opacity : 1.0));
 
-        // 2. Рисуем выделение поверх фигур
+        // Рисуем выделение
         selectedComponents.draw(gc, 1.0);
 
-        // 3. Рисуем рамку выделения (если нужно)
+        // Рисуем рамку выделения (если нужно)
         if (isSelecting) {
             gc.setStroke(Color.BLUE);
             gc.setLineWidth(2);
@@ -393,19 +370,6 @@ public class HelloController {
             double width = Math.abs(selectionEndX - selectionStartX);
             double height = Math.abs(selectionEndY - selectionStartY);
             gc.strokeRect(x, y, width, height);
-        }
-    }
-
-    @FXML
-    private void handleColorChange() {
-        if (!selectedComponents.getChildren().isEmpty()) {
-            Color newColor = colorPicker.getValue();
-            selectedComponents.getChildren().forEach(component -> {
-                if (component instanceof HighlightDecorator) {
-                    ((HighlightDecorator) component).setHighlightedColor(newColor);
-                }
-            });
-            redraw();
         }
     }
 }

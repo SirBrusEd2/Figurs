@@ -93,6 +93,7 @@ public class Plus extends Shape {
                 bottom - top
         );
     }
+
     @Override
     public void drawStroke(GraphicsContext gc, double x, double y) {
         // Вертикальная линия
@@ -110,5 +111,15 @@ public class Plus extends Shape {
                 horizontalWidth,
                 horizontalHeight
         );
+    }
+
+    public void setVerticalSize(double width, double height) {
+        this.verticalWidth = width;
+        this.verticalHeight = height;
+    }
+
+    public void setHorizontalSize(double width, double height) {
+        this.horizontalWidth = width;
+        this.horizontalHeight = height;
     }
 }

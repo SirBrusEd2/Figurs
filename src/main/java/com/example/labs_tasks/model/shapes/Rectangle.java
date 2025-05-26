@@ -44,8 +44,17 @@ public class Rectangle extends Shape {
                 height
         );
     }
+
     @Override
     public void drawStroke(GraphicsContext gc, double x, double y) {
         gc.strokeRect(x - width/2.0, y - height/2.0, width, height);
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }
